@@ -5,14 +5,80 @@
     <meta charset="utf-8">
     <script src="js/main.js"></script>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,900;1,14..32,900&display=swap" rel="stylesheet">
     
     <!-- get rid of favicon error -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
   <body>
-    <form>
-      <input type="text" id="yourname" value="your name here">
-      <button>submit</button>
-    </form>
+  <div class="container">
+    <div class="header">
+      <h1>Watchlist</h1>
+    </div>
+    <div class="form">
+      <form id="myForm">
+        <label for="format">Format:</label>
+        <select id="format" name="format" required>
+          <option value="" selected disabled></option>
+          <option value="Movie">Movie</option>
+          <option value="TV Show">TV Show</option>
+          <option value="Drama">Drama</option>
+          <option value="Documentary">Documentary</option>
+        </select>
+        <br>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="" size="40" maxlength="70" required>
+        <br>
+        <label for="genre">Genre:</label>
+        <div id="genre">
+          <input type="radio" id="action" name="genre" value="Action" required>
+          <label for="action">Action</label> <br>
+          <input type="radio" id="adventure" name="genre" value="Adventure">
+          <label for="adventure">Adventure</label> <br>
+          <input type="radio" id="comedy" name="genre" value="Comedy">
+          <label for="comedy">Comedy</label> <br>
+          <input type="radio" id="horror" name="genre" value="Horror">
+          <label for="horror">Horror</label> <br>
+          <input type="radio" id="thriller" name="genre" value="Thriller">
+          <label for="thriller">Thriller</label> <br>
+          <input type="radio" id="mystery" name="genre" value="Mystery">
+          <label for="mystery">Mystery</label> <br>
+          <input type="radio" id="romance" name="genre" value="Romance">
+          <label for="romance">Romance</label> <br>
+          <input type="radio" id="scifi" name="genre" value="Sci-Fi">
+          <label for="scifi">Sci-Fi</label> <br>
+          <input type="radio" id="historical" name="genre" value="Historical">
+          <label for="historical">Historical</label>
+        </div>
+
+        <label for="rating">Rating:</label>
+        <input type="number" id="rating" name="rating" min="1" max="10">
+        <br>
+        <label for="watched">Episodes Watched:</label>
+        <input type="number" id="watched" name="watched" min="0" max="300" required>
+        <br>
+        <label for="episodes">Total Episodes:</label>
+        <input type="number" id="episodes" name="episodes" min="1" max="300" required>
+
+        <br>
+        <button>Submit</button>
+      </form>
+    </div>
+    <div class="content">
+      <h2>My List</h2>
+      <table id="dataTable"></table>
+    </div>
+    <div class="footer">
+        <a href="mailto:cnngo@wpi.edu">Email</a>
+        <a href="https://github.com/christinenngo">Github</a>
+        <p>
+          &copy; 2025 Christine Ngo
+        </p>
+    </div>
+  </div>
+
+
   </body>
 </html>

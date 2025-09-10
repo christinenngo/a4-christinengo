@@ -1,4 +1,142 @@
-body {
-  background:black;
-  color:white;
+body, html {
+    background-color: #F7F7F7;
+    color: #333333;
+    overflow-x: hidden;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+}
+
+h1 {
+    font-weight: 900;
+}
+
+h2 {
+    font-weight: 800;
+    padding: 1px 30px;
+}
+
+.container {
+    display: grid;
+    grid-template-areas: "header header" "form content" "footer footer";
+    grid-template-columns: 1fr 3fr;
+}
+
+.container div {
+    padding: 10px;
+}
+
+.container div.header {
+    grid-area: header;
+    background-color: #5F7D8C;
+    width: 100%;
+    padding: 30px 40px;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.container div.form {
+    grid-area: form;
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+.container div.content {
+    grid-area: content;
+    background-color: #B0BFC6;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.container div.footer {
+    grid-area: footer;
+    background-color: #333333;
+    color: white;
+    padding: 30px 40px;
+    margin-top: 40px;
+    text-align: right;
+}
+
+form {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+select {
+    border-radius: 5px;
+    border-width: 1px;
+    height: 4px;
+    padding: 10px;
+}
+
+#rating, #title, #episodes, #watched {
+    height: 2px;
+}
+
+form label {
+    font-weight: 600;
+}
+
+#genre label {
+    padding: 0;
+    font-weight: normal;
+}
+
+button {
+    background-color: #5F7D8C;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #8AACBD;
+}
+
+table {
+    margin: 30px;
+    width: 95%;
+    border-collapse: collapse;
+}
+
+table, th, td{
+    text-align: left;
+    font-size: 16px;
+    padding: 40px;
+    border-style: solid;
+    border-color: #B0BFC6;
+}
+
+th {
+    background-color: #5F7D8C;
+    color: white;
+}
+
+th, td {
+    padding: 10px 30px;
+    border-bottom: 2px;
+}
+
+tr {
+    background-color: #B0BFC6;
+}
+
+tr:hover {
+    background-color: #8AACBD;
+}
+
+a {
+    color: white;
+    font-size: 16px;
+    padding-right: 10px;
+    text-align: left;
 }
