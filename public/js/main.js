@@ -53,18 +53,28 @@ async function loadData() {
                 <th>Rating</th>
                 <th>Watched</th>
                 <th>Episodes</th>
-                <th>Progress</th>`;
+                <th>Progress</th>
+                <th></th>`;
   table.appendChild(header);
-  data.forEach(item => {
+  data.forEach((item, index) => {
     const row = document.createElement('tr');
     row.innerHTML = `
                   <td>${item.format}</td>
                   <td>${item.title}</td>
                   <td>${item.genre}</td>
-                  <td>${item.rating}</td>
-                  <td>${item.watched}</td>
-                  <td>${item.episodes}</td>
-                  <td>${item.progress}</td>`;
+                  <td class="aligned">${item.rating}</td>
+                  <td class="aligned">${item.watched}</td>
+                  <td class="aligned">${item.episodes}</td>
+                  <td class="aligned">${item.progress}</td>
+                  <td><button class="deleteButton">Delete</button></td>`;
+
+    row.querySelector(".deleteButton").addEventListener("click", async() => {
+      await fetch(`/delete?index=${index}`, {
+        method:"DELETE"
+      })
+      await loadData();
+    })
+
     table.appendChild(row);
   })
 }

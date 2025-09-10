@@ -19,6 +19,8 @@ const server = http.createServer( function( request, response ) {
     handleGet( request, response )    
   }else if( request.method === "POST" ){
     handlePost( request, response ) 
+  } else if( request.method === "DELETE" ){
+    handleDelete( request, response )
   }
 })
 
@@ -54,7 +56,7 @@ const handlePost = function( request, response ) {
   })
 }
 
-function calculateProgress(watched, total) {
+const calculateProgress = function ( watched, total ) {
   const p = Math.floor((watched / total) * 100);
   if (p > 100) {
     return "100%";
@@ -62,6 +64,20 @@ function calculateProgress(watched, total) {
     return p + "%";
   } else {
     return "0%";
+  }
+}
+
+const handleDelete = function ( request, response ) {
+  if( request.url.startsWith("/delete?index=")) {
+    const row = request.url.split("=")[1];
+    const index = parseInt(row);
+    appdata.splice(index, 1);
+
+    response.writeHead( 200, "OK", {"Content-Type": "application/json" })
+    response.end(JSON.stringify(appdata))
+  } else {
+    response.writeHead( 400, "BAD", {"Content-Type": "application/json" })
+    response.end(JSON.stringify({error: response.error}))
   }
 }
 

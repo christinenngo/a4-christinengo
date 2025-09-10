@@ -1,7 +1,7 @@
 body, html {
     background-color: #F7F7F7;
     color: #333333;
-    overflow-x: hidden;
+    overflow: auto;
     margin: 0;
     font-family: "Inter", sans-serif;
 }
@@ -51,9 +51,17 @@ h2 {
     grid-area: footer;
     background-color: #333333;
     color: white;
+    width: 100%;
     padding: 30px 40px;
     margin-top: 40px;
     text-align: right;
+}
+
+a {
+    color: white;
+    font-size: 16px;
+    text-align: left;
+    padding-left: 10px;
 }
 
 form {
@@ -71,8 +79,7 @@ input {
 select {
     border-radius: 5px;
     border-width: 1px;
-    height: 4px;
-    padding: 10px;
+    padding: 3px;
 }
 
 #rating, #title, #episodes, #watched {
@@ -102,6 +109,11 @@ button:hover {
     background-color: #8AACBD;
 }
 
+.deleteButton {
+    padding: 6px;
+    font-size: 14px;
+}
+
 table {
     margin: 30px;
     width: 95%;
@@ -126,17 +138,14 @@ th, td {
     border-bottom: 2px;
 }
 
+.aligned {
+    text-align: center;
+}
+
 tr {
     background-color: #B0BFC6;
 }
 
 tr:hover {
     background-color: #8AACBD;
-}
-
-a {
-    color: white;
-    font-size: 16px;
-    padding-right: 10px;
-    text-align: left;
 }
