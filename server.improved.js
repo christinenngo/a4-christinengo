@@ -21,6 +21,8 @@ const server = http.createServer( function( request, response ) {
     handlePost( request, response ) 
   } else if( request.method === "DELETE" ){
     handleDelete( request, response )
+  } else if( request.method === "PATCH" ){
+    handlePatch( request, response )
   }
 })
 
@@ -78,6 +80,29 @@ const handleDelete = function ( request, response ) {
   } else {
     response.writeHead( 400, "BAD", {"Content-Type": "application/json" })
     response.end(JSON.stringify({error: response.error}))
+  }
+}
+
+const handlePatch = function( request, response ) {
+  if( request.url === "/update" ) {
+    let dataString = ""
+
+    request.on( "data", function( data ) {
+      dataString += data
+    })
+
+    request.on( "end", () => {
+      console.log( JSON.parse( dataString ) )
+      const parsedNewData = JSON.parse( dataString )
+      const index = parsedNewData.index;
+      const field = parsedNewData.field;
+
+      appdata[index][field] = parsedNewData.newInfo;
+      appdata[index].progress = calculateProgress(appdata[index].watched, appdata[index].episodes);
+
+      response.writeHead( 200, "OK", {"Content-Type": "application/json" })
+      response.end(JSON.stringify(appdata))
+    })
   }
 }
 
