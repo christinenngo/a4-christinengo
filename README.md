@@ -3,6 +3,8 @@ Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and
 
 Readme 
 ---
+Christine Ngo
+https://a2-christinengo.onrender.com
 
 ## Web Application: Watchlistify
 Watchlistify is a simple watchlist website that allows users to keep track of shows or movies they have watched or are currently watching. 
