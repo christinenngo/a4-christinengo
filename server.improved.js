@@ -1,73 +1,13 @@
+require('dotenv').config();
+const apiKey = process.env.API_KEY;
+const databaseUrl = process.env.DATABASE_URL;
+
 const express = require( 'express' ),
     app = express(),
-    appdata = [
-      { "format": "Drama", "title": "When I Fly Towards You", "genre": "Romance", "rating": 10, "watched": 24, "episodes": 24, "progress": "100%" },
-      { "format": "Movie", "title": "How to Train Your Dragon", "genre": "Adventure", "rating": 9, "watched": 1, "episodes": 1, "progress": "100%" },
-      { "format": "TV Show", "title": "Wednesday", "genre": "Mystery", "rating": 7.5, "watched": 7, "episodes": 8, "progress": "88%" },
-    ]
+    appdata = []
 
 app.use( express.static( 'public' ) )
 app.use( express.json())
-
-// const middleware_post = (req, res, next) => {
-//   let dataString = ''
-//
-//   req.on( 'data', function(data) {
-//     dataString += data;
-//   })
-//
-//   req.on( 'end', function() {
-//     const json = JSON.parse(dataString);
-//     appdata.push(json);
-//
-//     req.json = JSON.stringify(appdata);
-//
-//     next()
-//   })
-// }
-//
-// app.use( middleware_post )
-
-app.get( '/results', ( req, res ) => {
-  res.writeHead( 200, { 'Content-Type': 'application/json' })
-  res.end( JSON.stringify( appdata ))
-})
-
-app.post( '/submit', ( req, res ) => {
-  const data = req.body;
-
-  data.progress = calculateProgress(data.watched, data.episodes);
-
-  appdata.push( data )
-  res.writeHead( 200, "OK", {"Content-Type": "application/json" })
-  res.end(JSON.stringify(appdata))
-})
-
-app.delete( '/delete', ( req, res ) => {
-  if( req.url.startsWith("/delete?index=")) {
-    const row = req.url.split("=")[1];
-    const index = parseInt(row);
-    appdata.splice(index, 1);
-
-    res.writeHead( 200, "OK", {"Content-Type": "application/json" })
-    res.end(JSON.stringify(appdata))
-  } else {
-    res.writeHead( 400, "BAD", {"Content-Type": "application/json" })
-    res.end(JSON.stringify({error: res.error}))
-  }
-})
-
-app.patch( '/update', ( req, res ) => {
-  const newData = req.body;
-  const index = newData.index;
-  const field = newData.field;
-
-  appdata[index][field] = newData.newInfo;
-  appdata[index].progress = calculateProgress(appdata[index].watched, appdata[index].episodes);
-
-  res.writeHead( 200, "OK", {"Content-Type": "application/json" })
-  res.end(JSON.stringify(appdata))
-})
 
 const calculateProgress = function ( watched, total ) {
   const p = Math.floor((watched / total) * 100);
@@ -79,5 +19,73 @@ const calculateProgress = function ( watched, total ) {
     return "0%";
   }
 }
+
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+const uri = `mongodb+srv://${process.env.USERNM}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+let collection = null;
+
+async function run() {
+  try {
+    await client.connect();
+
+    collection = client.db("myDatabase").collection("myCollection");
+    await client.db("myDatabase").command({ ping: 1});
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } catch (err) {
+    console.log("err :", err);
+    await client.close();
+  }
+}
+
+app.use( (req, res, next) => {
+  if (collection !== null) {
+    next()
+  } else {
+    res.status(503).send()
+  }
+})
+
+app.get("/results", async (req, res) => {
+  if (collection !== null) {
+    const docs = await collection.find({}).toArray()
+    res.json(docs)
+  }
+})
+
+app.post('/submit', async (req, res) => {
+  const data = req.body;
+  data.progress = calculateProgress(data.watched, data.episodes);
+  const result = await collection.insertOne(data)
+  res.json(result)
+})
+
+app.post('/delete', async (req, res) => {
+  const result = await collection.deleteOne({
+    _id:new ObjectId(req.body._id)
+  })
+  res.json(result)
+})
+
+app.post('/update', async (req, res) => {
+  const data = req.body;
+  data.progress = calculateProgress(data.watched, data.episodes);
+
+  const result = await collection.updateOne(
+      { _id: new ObjectId(req.body._id)},
+      { $set:{ format: data.format, title: data.title, genre: data.genre, rating: data.rating, watched: data.watched, episodes: data.episodes, progress: data.progress }},
+  )
+  res.json(result)
+})
+
+run().catch(console.dir);
 
 app.listen( process.env.PORT || 3000 )
