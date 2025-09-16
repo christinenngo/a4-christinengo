@@ -1,10 +1,4 @@
 // FRONT-END (CLIENT) JAVASCRIPT HERE
-const update = async function( event ) {
-  const response = await fetch("/submit", {
-    method: "PATCH",
-    body
-  })
-}
 const submit = async function( event ) {
   // stop form submission from trying to load
   // a new .html page for displaying results...
