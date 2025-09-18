@@ -57,19 +57,21 @@ async function loadData() {
   data.forEach((item, index) => {
     const row = document.createElement('tr');
     row.innerHTML = `
-                  <td contenteditable="true" data-index="${index}" data-field="format">${item.format}</td>
-                  <td contenteditable="true" data-index="${index}" data-field="title">${item.title}</td>
-                  <td contenteditable="true" data-index="${index}" data-field="genre">${item.genre}</td>
-                  <td class="aligned" contenteditable="true" data-index="${index}" data-field="rating">${item.rating}</td>
-                  <td class="aligned" contenteditable="true" data-index="${index}" data-field="watched">${item.watched}</td>
-                  <td class="aligned" contenteditable="true" data-index="${index}" data-field="episodes">${item.episodes}</td>
+                  <td contenteditable="true" data-id="${item._id}" data-field="format">${item.format}</td>
+                  <td contenteditable="true" data-id="${item._id}" data-field="title">${item.title}</td>
+                  <td contenteditable="true" data-id="${item._id}" data-field="genre">${item.genre}</td>
+                  <td class="aligned" contenteditable="true" data-id="${item._id}" data-field="rating">${item.rating}</td>
+                  <td class="aligned" contenteditable="true" data-id="${item._id}" data-field="watched">${item.watched}</td>
+                  <td class="aligned" contenteditable="true" data-id="${item._id}" data-field="episodes">${item.episodes}</td>
                   <td class="aligned">${item.progress}</td>
                   <td><button class="deleteButton">Delete</button></td>`;
 
     table.appendChild(row);
     row.querySelector(".deleteButton").addEventListener("click", async() => {
-      await fetch(`/delete?index=${index}`, {
-        method:"DELETE"
+      await fetch('/delete', {
+        method:"POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: item._id }),
       })
       await loadData();
     })
@@ -79,18 +81,22 @@ async function loadData() {
 document.addEventListener("blur", async (e) => {
   const edit = e.target;
   if (!edit.matches('td[contenteditable="true"]')) {
+    console.log("Failed to edit.")
     return;
   }
 
-  const index = Number(edit.dataset.index);
+  const row = edit.closest("tr");
+  const _id = edit.dataset.id;
   const field = edit.dataset.field;
   const newInfo = edit.textContent.trim();
-  const body = JSON.stringify({index, field, newInfo});
+  const watched = row.querySelector('[data-field="watched"]').textContent.trim();
+  const episodes = row.querySelector('[data-field="episodes"]').textContent.trim();
+  const body = JSON.stringify({_id, field, newInfo, watched, episodes});
 
   await fetch("/update", {
-    method: "PATCH",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    body
+    body: body,
   })
 
   await loadData();

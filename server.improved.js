@@ -3,8 +3,8 @@ const apiKey = process.env.API_KEY;
 const databaseUrl = process.env.DATABASE_URL;
 
 const express = require( 'express' ),
-    app = express(),
-    appdata = []
+    app = express()
+    //appdata = []
 
 app.use( express.static( 'public' ) )
 app.use( express.json())
@@ -69,21 +69,31 @@ app.post('/submit', async (req, res) => {
 })
 
 app.post('/delete', async (req, res) => {
-  const result = await collection.deleteOne({
-    _id:new ObjectId(req.body._id)
-  })
-  res.json(result)
+  if(req?.body?._id) {
+    const result = await collection.deleteOne({
+      _id: new ObjectId(req.body._id)
+    })
+    res.json(result)
+  } else {
+    console.log("Id not found.")
+    res.status(500).send();
+  }
 })
 
 app.post('/update', async (req, res) => {
-  const data = req.body;
-  data.progress = calculateProgress(data.watched, data.episodes);
+  if(req?.body?._id) {
+    const data = {[req.body.field]: req.body.newInfo, watched: req.body.watched, episodes: req.body.episodes};
+    data.progress = calculateProgress(data.watched, data.episodes);
 
-  const result = await collection.updateOne(
-      { _id: new ObjectId(req.body._id)},
-      { $set:{ format: data.format, title: data.title, genre: data.genre, rating: data.rating, watched: data.watched, episodes: data.episodes, progress: data.progress }},
-  )
-  res.json(result)
+    const result = await collection.updateOne(
+        { _id: new ObjectId(req.body._id)},
+        { $set: data},
+    )
+    res.json(result)
+  } else {
+    console.log("Id not found.")
+    res.status(500).send();
+  }
 })
 
 run().catch(console.dir);
