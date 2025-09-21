@@ -1,10 +1,7 @@
 require('dotenv').config();
-const apiKey = process.env.API_KEY;
-const databaseUrl = process.env.DATABASE_URL;
 
 const express = require( 'express' ),
     app = express()
-    //appdata = []
 
 app.use( express.static( 'public' ) )
 app.use( express.json())
