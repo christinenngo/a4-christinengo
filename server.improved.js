@@ -2,9 +2,44 @@ require('dotenv').config();
 
 const express = require( 'express' ),
     app = express()
+const session = require('express-session');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github').Strategy;
 
 app.use( express.static( 'public' ) )
 app.use( express.json())
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+})
+passport.deserializeUser((obj, cb) => {
+  cb(null, obj);
+})
+
+passport.use(new GitHubStrategy({
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: 'http://localhost:3000/auth/github/callback'
+      // callbackURL: process.env.OAUTH_CALLBACK || 'http://localhost:3000/auth/github/callback'
+    },
+    async function(accessToken, refreshToken, profile, cb) {
+      const user = {
+        id: profile.id,
+        username: profile.username,
+        displayName: profile.displayName
+      };
+      return cb(null, user);
+    }
+));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const calculateProgress = function ( watched, total ) {
   const p = Math.floor((watched / total) * 100);
@@ -51,21 +86,53 @@ app.use( (req, res, next) => {
   }
 })
 
-app.get("/results", async (req, res) => {
+app.get('/auth/github',
+    passport.authenticate('github'));
+
+app.get('/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/' }),
+    function(req, res) {
+      res.redirect('/');
+    });
+
+app.get('/user', (req, res) => {
+  if(!req.user) {
+    return res.json({authenticated: false});
+  }
+  res.json({authenticated: true, user: req.user});
+})
+
+app.get("/results", requireAuth, async (req, res) => {
   if (collection !== null) {
     const docs = await collection.find({}).toArray()
     res.json(docs)
   }
 })
 
-app.post('/submit', async (req, res) => {
+app.post('/logout', function(req, res, next) {
+  req.logout(function(err) {
+    if(err) {
+      return next(err);
+    }
+    res.redirect('/');
+  });
+});
+
+function requireAuth(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  return res.redirect('/auth/github');
+}
+
+app.post('/submit', requireAuth, async (req, res) => {
   const data = req.body;
   data.progress = calculateProgress(data.watched, data.episodes);
   const result = await collection.insertOne(data)
   res.json(result)
 })
 
-app.post('/delete', async (req, res) => {
+app.post('/delete', requireAuth, async (req, res) => {
   if(req?.body?._id) {
     const result = await collection.deleteOne({
       _id: new ObjectId(req.body._id)
@@ -77,7 +144,7 @@ app.post('/delete', async (req, res) => {
   }
 })
 
-app.post('/update', async (req, res) => {
+app.post('/update', requireAuth, async (req, res) => {
   if(req?.body?._id) {
     const data = {[req.body.field]: req.body.newInfo, watched: req.body.watched, episodes: req.body.episodes};
     data.progress = calculateProgress(data.watched, data.episodes);
