@@ -8,6 +8,7 @@ body, html {
 
 h1 {
     font-weight: 900;
+    font-size: 40px;
 }
 
 h2 {
@@ -33,10 +34,10 @@ h3 {
 .container div.header {
     grid-area: header;
     background-color: #5F7D8C;
-    width: 100%;
     padding: 30px 45px;
     margin-bottom: 40px;
     color: white;
+    display: inline;
 }
 
 .container div.form {
@@ -56,7 +57,6 @@ h3 {
     grid-area: footer;
     background-color: #333333;
     color: white;
-    width: 100%;
     padding: 30px 40px;
     margin-top: 40px;
     text-align: right;
@@ -103,6 +103,15 @@ form label {
 #genre label {
     padding: 0;
     font-weight: normal;
+}
+
+#logout {
+    display: inline;
+}
+
+#userInfo {
+    text-align: right;
+    font-weight: 500;
 }
 
 button {
