@@ -1,43 +1,30 @@
-body, html {
-    background-color: #F7F7F7;
-    color: #333333;
-    overflow: auto;
-    margin: 0;
-    font-family: "Inter", sans-serif;
-}
-
 h1 {
-    font-weight: 900;
     text-align: center;
     font-size: 70px;
-    color: #333333;
 }
 
 div {
     padding: 30px;
-    align-content: center;
     text-align: center;
 }
 
 #userInfo {
-    font-weight: 700;
-    padding: 5px 30px;
     text-align: right;
     font-size: 16px;
 }
 
-.button {
-    text-align: center;
-    color: white;
-    padding: 30px;
-    border-radius: 14px;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: #5F7D8C;
-    text-decoration: none;
+.signIn {
+    padding-top: 200px;
 }
 
-.signIn {
-    display: grid;
-    padding: 200px;
+button {
+    background-color: white;
+}
+
+a #login.button {
+    color: white;
+}
+
+a:visited {
+    color: white;
 }
